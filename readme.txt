@@ -1,11 +1,11 @@
 === WP Easy Post Types ===
-Contributors:  chertz
+Contributors:  chertz, james.cole
 Plugin website: http://www.wpeasyposttypes.com
 Tags: custom post types, cms, custom fields, custom categories
-Requires at least: 3.0.0
-Tested up to: 3.4.1
-Stable tag: 1.4.0
-Last updated time: 2013-03-22
+Requires at least: 3.5.2
+Tested up to: 3.7.1
+Stable tag: 1.4.1
+Last updated time: 2013-11-15
 
 Create custom WordPress post types on the fly with an easy to use interface. Then manage custom fields and categories for your post types.
 
