@@ -85,5 +85,5 @@ This is an issue with WordPress rewrite. We are looking into how to workaround t
 
 1. Fixed issues with category save functionality
 
-= 1.4.2 =
+= 1.4.1 =
 1. Updated jQuery method to support jQuery version >= 1.9: switched calls to live() to on()
