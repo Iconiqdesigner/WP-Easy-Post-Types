@@ -29,7 +29,7 @@ define( 'EASYPOSTTYPES_PLUGIN_URL', plugins_url( '', __FILE__).'/');
 define( 'EASYPOSTTYPES_ICONS_URL', EASYPOSTTYPES_PLUGIN_URL.'icons/');
 
 class CustomFields {
-    private $version="1.4.0";
+    private $version="1.4.1";
     public  $ajaxUrl;
     public  $types = array();
     public  $registeredPostTypes= array();
