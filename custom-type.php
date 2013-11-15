@@ -4,7 +4,7 @@ Plugin Name: Easy Post Types
 Plugin URI: http://www.wpeasyposttypes.com
 Description: Handle multiple post types and related custom fields and templates
 Author: New Signature
-Version: 1.4.0
+Version: 1.4.1
 Author URI: http://newsignature.com/
 */
 
@@ -29,7 +29,7 @@ define( 'EASYPOSTTYPES_PLUGIN_URL', plugins_url( '', __FILE__).'/');
 define( 'EASYPOSTTYPES_ICONS_URL', EASYPOSTTYPES_PLUGIN_URL.'icons/');
 
 class CustomFields {
-    private $version="1.4.0";
+    private $version="1.4.1";
     public  $ajaxUrl;
     public  $types = array();
     public  $registeredPostTypes= array();
