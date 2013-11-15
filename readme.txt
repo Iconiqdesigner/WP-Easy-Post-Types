@@ -4,7 +4,7 @@ Plugin website: http://www.wpeasyposttypes.com
 Tags: custom post types, cms, custom fields, custom categories
 Requires at least: 3.5.2
 Tested up to: 3.7.1
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 Last updated time: 2013-11-15
 
 Create custom WordPress post types on the fly with an easy to use interface. Then manage custom fields and categories for your post types.
@@ -17,7 +17,7 @@ This plugin lets you take advantage of the Wordpress 3.0 custom post type featur
 
 == Installation ==
 
-1. After downloading the plugin, unzip the plugin 
+1. After downloading the plugin, unzip the plugin
 1. Upload `easyposttypes` to the `/wp-content/plugins/` directory  or go through the Wordpress plugin Upload dialog
 1. Activate the plugin
 
@@ -87,3 +87,6 @@ This is an issue with WordPress rewrite. We are looking into how to workaround t
 
 = 1.4.1 =
 1. Updated jQuery method to support jQuery version >= 1.9: switched calls to live() to on()
+
+= 1.4.2 =
+1. Update to fix bug in display of custom fields in admin menus

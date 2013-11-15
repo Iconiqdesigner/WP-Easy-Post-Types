@@ -4,7 +4,7 @@ Plugin Name: Easy Post Types
 Plugin URI: http://www.wpeasyposttypes.com
 Description: Handle multiple post types and related custom fields and templates
 Author: New Signature
-Version: 1.4.1
+Version: 1.4.2
 Author URI: http://newsignature.com/
 */
 
@@ -29,7 +29,7 @@ define( 'EASYPOSTTYPES_PLUGIN_URL', plugins_url( '', __FILE__).'/');
 define( 'EASYPOSTTYPES_ICONS_URL', EASYPOSTTYPES_PLUGIN_URL.'icons/');
 
 class CustomFields {
-    private $version="1.4.1";
+    private $version="1.4.2";
     public  $ajaxUrl;
     public  $types = array();
     public  $registeredPostTypes= array();
@@ -53,7 +53,7 @@ class CustomFields {
 
     public function  __construct() {
         global $wpdb;
-        
+
         $this->ajaxUrl = admin_url('admin-ajax.php');
         $this->httpRoot = EASYPOSTTYPES_PLUGIN_URL;
         load_plugin_textdomain('cct', false, dirname( plugin_basename( __FILE__ ) )  );
@@ -98,8 +98,8 @@ class CustomFields {
             'view' => array( __('View Post','cct'), __('View Page','cct'), __('View','cct') ),
             'parent_item_colon' => array( null, __('Parent Page:','cct'), __('Parent Item','cct') )
         );
-        
-        
+
+
 
         add_action('init', array($this, 'init' ));
         add_action('save_post', array($this, 'save_postdata'));
@@ -146,7 +146,7 @@ class CustomFields {
            $output .= "data['post_label_".$key."']=jQuery(\"#post_label_".$key.'").val();';
            $output .= "data['page_label_".$key."']=jQuery(\"#page_label_".$key.'").val();';
        }
-       
+
        return $output;
    }
 
@@ -158,9 +158,9 @@ class CustomFields {
 
        return $output;
    }
-   
-   
-   
+
+
+
    /**
     * Create the admin pages
     *
@@ -181,22 +181,22 @@ class CustomFields {
        add_action('admin_print_styles-'.$page2, array($this, 'print_admin_styles' ));
        add_action('admin_print_styles-'.$page3, array($this, 'print_admin_styles' ));
    }
-   
+
    public function noop(){}
-   
+
    public function admin_help($contextual_help, $screen) {
-      
+
       if($screen->id == 'toplevel_page_ct_general') {
         $contextual_help[$screen->id] = __('Help for the custom post types settings page','cct');
       } else {
         $contextual_help[$screen->id] = '';
       }
-      
+
       if($screen->parent_base == 'ct_general'){
         $contextual_help[$screen->id] .= '<h5>' . __('General Help','cct') . '</h5>';
         $contextual_help[$screen->id] .= __('General Help','cct');
       }
-      
+
       return $contextual_help;
    }
 
@@ -214,7 +214,7 @@ class CustomFields {
         _e('Please add a post type first...','cct');
       }
    }
-    
+
     public function convert_taxonomy_term_in_query($query) {
         global $pagenow;
         if ($pagenow=='edit.php') {
@@ -232,14 +232,14 @@ class CustomFields {
             }
         }
     }
-    
-    
+
+
     public function restrict_listings_by_category() {
         global $typenow;
         global $wp_query;
         $list = $this->fields_info['categories'];
         if ($list) {
-            foreach($list as $key => $cat) {    
+            foreach($list as $key => $cat) {
                 if (isset($this->fields_info['categories'][$key]['refinesearch'])) {
                     $taxonomy = get_taxonomy($key);
                     wp_dropdown_categories(array(
@@ -257,18 +257,18 @@ class CustomFields {
             }
         }
     }
-	
-    
+
+
     /**
      * Render the edit field form
-     * 
+     *
      * @param $values
      */
     public function edit_field_form($values=array(), $errors=array(), $is_new=true) {
       include CONTEXFLOW_TEMPLATES_DIR.'field-form.php';
     }
-    
-    
+
+
     /**
      * Render the settings for a form type in the edit field
      *
@@ -279,8 +279,8 @@ class CustomFields {
       $fieldType=$this->getFieldType($field_type);
       include CONTEXFLOW_TEMPLATES_DIR.'field-form-field-settings.php';
     }
-    
-    
+
+
     /**
      * Render the category form
      *
@@ -344,11 +344,11 @@ class CustomFields {
         $this->save_content_type();
         return true;
     }
-    
-    
+
+
     /**
      * Add/Update a field settings
-     * 
+     *
      * @param $content_type string - the key for the post type to add a field to
      * @param $field_key string - the key for the field
      * @param $field_type string - the name of the type of field
@@ -361,14 +361,14 @@ class CustomFields {
       if(empty($field_key) || empty($content_type) || empty($field_type)){
         return false;
       }
-      
+
       // Get the definition for the field type
       $field_type_def =$this->getFieldType($field_type);
       if($field_type_def==null){
         // return if not set
         return false;
       }
-      
+
       // Check if we are updating or adding
       if(isset($this->fields_info['fields'][$content_type][$field_key])){
         // update the field
@@ -376,15 +376,15 @@ class CustomFields {
         if(!empty($field_name)){
           $update['name'] = $field_name;
         }
-        
+
         if(!empty($add_as_column)){
           $update['show_list'] = $add_as_column;
         }
-        
+
         if($extra!=null){
           $update['extra'] = $field_type_def->extra($extra);
         }
-        
+
         $this->fields_info['fields'][$content_type][$field_key] = array_merge( $this->fields_info['fields'][$content_type][$field_key], $update );
       } else {
         // new field
@@ -396,37 +396,37 @@ class CustomFields {
           'extra' =>  $field_type_def->extra($extra),
         );
       }
-      
+
       $this->save_content_type();
-      
+
       return $this->fields_info['fields'][$content_type][$field_key];
     }
-    
-    
+
+
     /**
      *  Register a custom post type form handler
      */
     public function register_post_type_form_handler() {
         global $user_login;
-        
+
         // get the really basic information first
         $post_type_key = $_POST['content_type'];
         $name_plural = $_POST['label'];
         $name_singular = $_POST['singular_label'];
-        
+
         // Will not save without a name for the post type
         if(empty($name_plural)){
           return;
         }
-        
-        
+
+
         // is this a new post type?
         $is_new = empty($post_type_key) || !isset($this->fields_info['types'][$post_type_key]);
-        
+
         // Validate/create key
         if(!$is_new && empty($post_type_key)){
           return; // it must have a key for an existing post type
-          
+
         } else if(empty($post_type_key)){
           // create a unique key for a new post type
           $post_type_key = $this->sanitize_key($name_plural);
@@ -438,40 +438,40 @@ class CustomFields {
             $post_type_key = $post_type_key.'-'.$i;
           }
         }
-        
+
         // redundant check to stop if key is missing
         if(empty($post_type_key)){
           return;
         }
-        
-        
+
+
         // Convert a value of 'on' to true, a new content type to true, otherwise, false
         $pretty_urls = (!empty($_POST['pretty_urls']) && $_POST['pretty_urls']=='on') || $is_new;
-        
-        
+
+
         // 'label' = $name_plural
         // 'content_type' = $post_type_key
         // 'singular_label' = $name_singular
         // 'pretty_urls' = $pretty_urls
-        
-        
+
+
         // Save the names
         $this->fields_info['types'][$post_type_key]['label']= $name_plural;
         $this->fields_info['types'][$post_type_key]['singular_label']=(empty($name_singular) ? $name_plural : $name_singular);
-        
-        
+
+
         // Save all the supported features
         foreach($this->supports as $key) {
             $this->fields_info['types'][$post_type_key][$key]= (!empty($_POST[$key]) && $_POST[$key]=='on');
         }
-        
-        
+
+
         // Save creation time and user
         if (!isset($this->fields_info['types'][$post_type_key]['created'])) {
           $this->fields_info['types'][$post_type_key]['created']=time();
           $this->fields_info['types'][$post_type_key]['createdby']=$user_login;
         }
-        
+
         // Save the pretty URLs setting
         $this->fields_info['types'][$post_type_key]['rewrite']= $pretty_urls;
         // CUSTOM REWRITE RULES
@@ -484,7 +484,7 @@ class CustomFields {
 	        $wp_rewrite->add_permastruct($post_type_slug, $permalink_structure, false);
 	        flush_rewrite_rules();
         }*/
-        
+
         // Default settings for a new post type
         // show_ui
         if (!isset($this->fields_info['types'][$post_type_key]['show_ui'])) {
@@ -494,16 +494,16 @@ class CustomFields {
         if (!isset($this->fields_info['types'][$post_type_key]['public'])) {
             $this->fields_info['types'][$post_type_key]['public']=true;
         }
-        
+
         // Add the special columns for the admin screen with all the objects of the post type
         $this->fields_info['fields'][$post_type_key]['admin_columns']=array('cb','title','author');
-        
+
         $this->save_content_type();
 
         if ($is_new) flush_rewrite_rules(); // Make sure permalinks knows about our new post type.
     }
-    
-    
+
+
 
     public function utilities() {
       include BOXES_TEMPLATES_DIR.'utility.php';
@@ -565,7 +565,7 @@ class CustomFields {
         $this->jsclass->create($this);
         include PLUGIN_DIR . "main.php";
     }
-    
+
     /**
      * Delete a field from a post type
      *
@@ -660,43 +660,43 @@ class CustomFields {
             echo '</div>';
           }
     }
-  
-  
-  
+
+
+
     /**
      * Delete a field from a content-type via AJAX
      *
-     * 
+     *
      */
     public function ajax_delete_field() {
-      
+
       $retval = array( 'status' => 'success' );
-      
+
       // Check that the content_type is given
       if(empty($_POST['content_type'])){
         $retval['status'] = 'error';
         $retval['message'] = __('No post type was given.', 'cct');
-        
+
       } else {
         // Get values from the POST
         $content_type = $_POST['content_type'];
         $field_name = $_POST['field_name'];
-        
+
         // Delete the field
         $this->remove_field_from_content_type($content_type, $field_name);
-        
+
         // Rerender the list of fields
         $content=$this->fields_info['types'][$content_type];
         $content['systemkey'] = $content_type;
         $content['fields'] = $this->fields_info['fields'][$content_type];
-        
+
         ob_start();
         $this->list_fields($content);
         $fields = ob_get_contents();
-        ob_end_clean(); 
+        ob_end_clean();
         $retval['contents'] = $fields;
       }
-      
+
       echo $this->json_encode($retval);
       exit();
     }
@@ -704,7 +704,7 @@ class CustomFields {
     // Ajax Call to update labels.
     public function ajax_update_labels() {
         $type=$_POST['content_type'];
-        
+
         $this->fields_info['types'][$type]['labels']=array();
         foreach($this->labels as $key=>$label) {
            $this->fields_info['types'][$type]['labels'][$key]=array();
@@ -744,7 +744,7 @@ class CustomFields {
         foreach ($this->fields_info['fields'][$type] as $key=>$value) {
             $this->fields_info['fields'][$type][$key]['show_list']='off';
         }
-        
+
         if (is_array($fields)) {
             foreach($fields as $field) {
                 if (isset($this->fields_info['fields'][$type][$field])) {
@@ -755,12 +755,12 @@ class CustomFields {
                 }
             }
         }
-        
+
         echo $_POST['admin_menu_icon'];
-        
+
         $this->fields_info['types'][$type]['menu_position']= (int) $_POST['admin_menu_position'];
         $this->fields_info['types'][$type]['menu_icon']=empty($_POST['admin_menu_icon'])? null: $_POST['admin_menu_icon'];
-        
+
         $this->save_content_type();
 
         exit();
@@ -805,7 +805,7 @@ class CustomFields {
             $sorted[$key]=$this->fields_info['fields'][$type][$key];
           }
         }
-        
+
         $this->fields_info['fields'][$type]=$sorted;
 
         $this->save_content_type();
@@ -820,8 +820,8 @@ class CustomFields {
 
         exit();
     }
-    
-    
+
+
     /**
      * Update/Add a category
      *
@@ -840,7 +840,7 @@ class CustomFields {
       if(empty($key)){
         return false;
       }
-      
+
       if(isset($this->fields_info['categories'][$key])){
         $options = array_merge($this->fields_info['categories'][$key]['filters'], array( 'object_type' => $this->fields_info['categories'][$key]['object_type']), $options);
       } else {
@@ -853,7 +853,7 @@ class CustomFields {
             'label'       => $key,
           ), $options);
       }
-      
+
       $this->fields_info['categories'][$key]=array (
         'internal_name' => $key,
         'postpages'     => $options['postpages'],
@@ -867,20 +867,20 @@ class CustomFields {
           'label'         => $options['label']
         )
       );
-      
+
       if ($options['postpages'])
           $postpages = array('post','page');
       else
           $postpages = array();
 
       register_taxonomy($key, array_merge($options['object_type'],$postpages), $this->fields_info['categories'][$key]['filters']);
-      
+
       $this->save_content_type();
-      
+
       return true;
     }
-    
-    
+
+
     /**
      * Returns the form for a category
      */
@@ -893,8 +893,8 @@ class CustomFields {
         $this->edit_category_form($category);
         exit();
     }
-    
-    
+
+
     /**
      * Add a category via AJAX
      *
@@ -904,8 +904,8 @@ class CustomFields {
     public function ajax_add_category() {
       return $this->_ajax_save_category(true);
     }
-    
-    
+
+
     /**
      * Renders the category list for a post type
      *
@@ -915,24 +915,24 @@ class CustomFields {
       $content['systemkey']=$content_type;
       $content['fields'] = $this->fields_info['fields'][$content_type];
       $content['categories'] = $this->fields_info['categories'];
-      
+
       ob_start();
       $this->list_categories($content);
       $cats = ob_get_contents();
-      ob_end_clean();  
-      
+      ob_end_clean();
+
       return $cats;
     }
-    
-    
+
+
     public function _ajax_save_category($is_new){
-      $retval = array( 
+      $retval = array(
           'status' => 'success',
         );
-        
+
         // Abort if content_type is not defined for a new category
         if ($is_new && empty($_POST['content_type'])){
-            $retval = array( 
+            $retval = array(
               'status' => 'error',
               'message' => __('Missing post type to associate the category with.', 'cct')
             );
@@ -942,28 +942,28 @@ class CustomFields {
           $this->edit_category_form($_POST, array('name'));
           $form = ob_get_contents();
           ob_end_clean();
-          $retval = array( 
+          $retval = array(
               'status' => 'error',
               'message' => __('You need to give a name for the category.', 'cct'),
               'form' => $form,
             );
         // Abort if updating a category and the internal_name is missing
         } elseif(!$is_new && empty($_POST['internal_name'])){
-          $retval = array( 
+          $retval = array(
               'status' => 'error',
               'message' => __('The system name is missing.', 'cct'),
             );
         // Save the category
-        } else { 
+        } else {
           // The options for the category
           $cat_options = array(
-             'hierarchical' => $_POST['hierarchical']=='on', 
+             'hierarchical' => $_POST['hierarchical']=='on',
              'query_var' => $_POST['query_var']=='on',
              'rewrite' => $_POST['rewrite']=='on',
              'public' => $_POST['public']=='on',
              'label' => $_POST['name']
           );
-          
+
           $cat_options['postpages'] = $_POST['postpages']=='on';
 		  $cat_options['refinesearch'] = $_POST['refinesearch']=='on';
 
@@ -973,37 +973,37 @@ class CustomFields {
             $_POST['internal_name'] = empty($_POST['internal_name']) ? $this->sanitize_key($_POST['name']) : $this->sanitize_key($_POST['internal_name']);
             $cat_options['object_type'] = array($_POST['content_type']);
           }
-          
+
           $this->update_category($_POST['internal_name'], $cat_options);
-          
+
           // Rerender the list of categories and return it to update the list
           $retval['categories'] = $this->_rerender_categories_via_ajax($_POST['content_type']);
         }
-        
-        
+
+
         echo $this->json_encode($retval);
         exit();
     }
-    
-    
+
+
     /**
      * Update the settings for an existing category via AJAX
      */
     public function ajax_update_category() {
         return $this->_ajax_save_category(false);
     }
-    
-    
+
+
     /**
      * Saves the categories that are used by a post type via AJAX
      *
      */
     public function ajax_save_categories_used_by_content_type() {
-      
+
       $retval = array(
         'status' => 'success'
       );
-      
+
       if(empty($_POST['content_type'])){
         $retval['status'] = 'error';
         $retval['message'] = __('Missing post type to associate the categories with.', 'cct');
@@ -1034,7 +1034,7 @@ class CustomFields {
         foreach($this->fields_info['categories'] as $key=>$type) {
             unset($this->fields_info['categories'][$key]['postpages']);
         }
-		
+
         if (is_array($_POST['postpages_to_update'])) {
             foreach($_POST['postpages_to_update'] as $key => $state){
                 $this->fields_info['categories'][$key]['postpages']=($state=='true' || $state=='checked');
@@ -1044,45 +1044,45 @@ class CustomFields {
         foreach($this->fields_info['categories'] as $key=>$type) {
             unset($this->fields_info['categories'][$key]['refinesearch']);
         }
-        
+
         if (is_array($_POST['refine_to_update'])) {
             foreach($_POST['refine_to_update'] as $key => $state){
                 $this->fields_info['categories'][$key]['refinesearch']=($state=='true' || $state=='checked');
             }
         }
-		
-		
+
+
         $this->save_content_type();
         $retval['number_changed'] = $i;
         $retval['contents'] = $this->_rerender_categories_via_ajax($_POST['content_type']);
       }
-      
+
       echo $this->json_encode($retval);
       exit();
     }
-    
-    
+
+
     /**
      * The AJAX callback for adding fields
-     * 
-     * 
+     *
+     *
      */
     public function ajax_add_field() {
       $retval = array(
         'status' => 'success'
       );
-      
+
       // ensure if content_type is set
       if(empty($_POST['content_type'])){
         $retval['status'] = 'error';
         $retval['message'] = __('Missing post type to associate the field with.', 'cct');
-        
+
       // ensure that name, ct_name, field_name is set
       } elseif(empty($_POST['name']) || empty($_POST['ct_name'])) {
         $retval['status'] = 'error';
         $retval['errors'] = array();
         $errors = array();
-        
+
         $es = array( 'name', 'ct_name' );
         foreach( $es as $e ){
           if(empty($_POST[$e])){
@@ -1090,22 +1090,22 @@ class CustomFields {
           }
         }
         $retval['errors'] = $errors;
-        
-        // Recreate the form with errors!!!!      
+
+        // Recreate the form with errors!!!!
         ob_start();
         $this->edit_field_form($_POST, $errors);
         $retval['contents'] = ob_get_contents();
         ob_end_clean();
-      
+
       // save it
-      } else {        
+      } else {
         $content_type = $_POST['content_type'];
         $field_key = empty($_POST['field_name']) ? $this->sanitize_key($_POST['name']) : $this->sanitize_key($_POST['field_name']);
         $field_type = $_POST['ct_name'];
         $field_name = $_POST['name'];
         $add_as_column = ( empty( $_POST['show_list'] ) || ( false == $_POST['show_list'] ) ) ? false : true;
         $extra = $_POST;
-        
+
         $field = $this->update_field($content_type, $field_key, $field_type, $field_name, $add_as_column, $extra);
         if($field==false){
           $retval['status'] = 'error';
@@ -1122,36 +1122,36 @@ class CustomFields {
           ob_end_clean();
         }
       }
-      
-      
+
+
       echo $this->json_encode($retval);
       exit();
     }
-    
-    
-    
-    
+
+
+
+
     /**
      * The AJAX callback for saving a field
-     * 
-     * 
+     *
+     *
      */
     public function ajax_save_field() {
       $retval = array(
         'status' => 'success'
       );
-      
+
       // ensure if content_type is set
       if(empty($_POST['content_type'])){
         $retval['status'] = 'error';
         $retval['message'] = __('Missing post type to associate the field with.', 'cct');
-        
+
       // ensure that name, ct_name, field_name is set
       } elseif(empty($_POST['name']) || empty($_POST['ct_name'])) {
         $retval['status'] = 'error';
         $retval['errors'] = array();
         $errors = array();
-        
+
         $es = array( 'name', 'ct_name' );
         foreach( $es as $e ){
           if(empty($_POST[$e])){
@@ -1159,22 +1159,22 @@ class CustomFields {
           }
         }
         $retval['errors'] = $errors;
-        
-        // Recreate the form with errors!!!!      
+
+        // Recreate the form with errors!!!!
         ob_start();
         $this->edit_field_form($_POST, $errors);
         $retval['contents'] = ob_get_contents();
         ob_end_clean();
-      
+
       // save it
-      } else {        
+      } else {
         $content_type = $_POST['content_type'];
         $field_key = $_POST['field_name'];
         $field_type = $_POST['ct_name'];
         $field_name = $_POST['name'];
         $add_as_column = !!$_POST['show_list'];
         $extra = $_POST;
-        
+
         $field = $this->update_field($content_type, $field_key, $field_type, $field_name, $add_as_column, $extra);
         if($field==false){
           $retval['status'] = 'error';
@@ -1191,14 +1191,14 @@ class CustomFields {
           ob_end_clean();
         }
       }
-      
-      
+
+
       echo $this->json_encode($retval);
       exit();
     }
-    
-    
-    
+
+
+
     /**
      * Outputs the table rows of categories for a post type.
      *
@@ -1211,8 +1211,8 @@ class CustomFields {
         $this->edit_field_form();
         exit();
     }
-    
-    
+
+
     /**
      * Outputs the settings for a field type.
      *
@@ -1221,12 +1221,12 @@ class CustomFields {
       $retval = array(
         'status' => 'success',
       );
-      
+
       ob_start();
       $this->edit_field_form_type_fields($_POST['field_type'], $_POST['content_type']);
       $retval['contents'] = ob_get_contents();
       ob_end_clean();
-      
+
       echo $this->json_encode($retval);
       exit();
     }
@@ -1355,7 +1355,7 @@ class CustomFields {
         include PLUGIN_DIR . "quickedit-form.php";
         exit();
     }
-    
+
     public function remove_objects(&$var){
         if (!is_array($var)) return;
         foreach($var as $key => $t) {
@@ -1405,7 +1405,7 @@ class CustomFields {
         if ($ct) {
             $this->fields_info['fields']=$ct;
         }
-        
+
         $ct = get_option('ct_categories_types');
         if ($ct) {
             $this->fields_info['categories']=$ct;
@@ -1422,12 +1422,12 @@ class CustomFields {
     }
 
     public function registerContentTypes() {
-        
+
         $this->registeredPostTypes=array();
         if (isset($this->fields_info['types'])) {
             foreach ($this->fields_info['types'] as $key => $type) {
                 // DON'T USE $type
-                
+
                 // register_meta_box_cb is an option when creating a custom post type
                 // register_meta_box_cb - Provide a callback function that will be called when setting up the meta boxes for the edit form. Do remove_meta_box() and add_meta_box() calls in the callback
                 $this->fields_info['types'][$key]['register_meta_box_cb'] = array($this, 'init_custom_meta_boxes_for_post_edit');
@@ -1437,28 +1437,28 @@ class CustomFields {
                       $sup[]=$supkey;
                 }
                 $this->fields_info['types'][$key]['supports']=$sup;
-                
+
                 // give the menu icon a working URL here
                 if ( ! empty( $this->fields_info['types'][$key]['menu_icon'] ) )
                 $menu_icon = $this->fields_info['types'][$key]['menu_icon'];
                 else
                     $menu_icon = '';
-                
+
                 if(!empty($menu_icon)){
                   $this->fields_info['types'][$key]['menu_icon'] = EASYPOSTTYPES_ICONS_URL.$menu_icon;
                 }
                 $this->fields_info['types'][$key]['taxonomies'] = array('category','post_tag');
-                
+
                 $this->fields_info['types'][$key]['has_archive'] = true;
-                
+
                 $this->fields_info['types'][$key]['show_in_nav_menus'] = true;
 
                 // Tell WordPress about the post type
                 register_post_type($key, $this->fields_info['types'][$key]);
-                
+
                 $this->register_columns($key, $this->fields_info['types'][$key]);
                 $this->registeredPostTypes[]=$key;
-                
+
                 // return the menu icon back to its stored value
                 $this->fields_info['types'][$key]['menu_icon'] = $menu_icon;
             }
@@ -1513,7 +1513,7 @@ class CustomFields {
         }
         return $key;
     }
-   
+
     public function options_scripts() {
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-ui-dialog');
@@ -1524,7 +1524,7 @@ class CustomFields {
         wp_enqueue_script('custom-type', $this->httpRoot . 'custom-types.js', array('postbox'));
         wp_enqueue_script('custom-type', $this->httpRoot . 'edit.js', array('postbox'));
     }
-    
+
     public function edit_scripts() {
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-ui-dialog');
@@ -1535,21 +1535,21 @@ class CustomFields {
         wp_enqueue_script('custom-content-type-edit', $this->httpRoot . 'edit.js', array('postbox'));
         wp_enqueue_script('custom-content-type-trans', $this->httpRoot . 'translations.js', array('postbox'));
     }
-    
+
     public function print_admin_styles() {
         wp_enqueue_style('jquery-ui', $this->httpRoot .'/lib/jquery-ui-theme/theme.css');
-        
+
     }
 
-    public function init() { 
-    	  if(is_admin()) {    
+    public function init() {
+    	  if(is_admin()) {
 	        wp_enqueue_style('jquery-ui');
 	        wp_enqueue_style('custom-type-style', $this->httpRoot . 'style.css');
     	  }
         do_action('ct_load_types',$this);
         $this->load_content_type();
         $this->registerContentTypes();
-        
+
     }
 
     public function save_postdata( $post_id ) {
@@ -1595,8 +1595,8 @@ class CustomFields {
         }
         return null;
     }
-    
-    
+
+
     /**
      * This is called to setup the custom meta boxes for a custom post type edit page
      *
@@ -1608,31 +1608,31 @@ class CustomFields {
     public function init_custom_meta_boxes_for_post_edit($args) {
       $post_type_key = $args->post_type;
       $name = $this->fields_info['types'][$post_type_key]['singular_label'];
-      
+
       $this->load_content_type();
       // check if the post type exists or has fields
       if ($this->fields_info['fields'][$post_type_key]) {
         add_meta_box('setcustommeta', $name.__(' fields','cct'), array($this, 'custom_fields_meta_box_for_post_edit'), $post_type_key, 'normal', 'core');
       }
     }
-    
-    
-    
-    
+
+
+
+
     public function custom_fields_meta_box_for_post_edit($post) {
         do_action('ct_load_types',$this);
-        
+
         $rows = array();
         $nonce=$post->post_type.'_nonce';
 
         echo '<input type="hidden" name="'.$nonce.'" id="id_'.$nonce.'" value="' .
         wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
-         
+
         $index=0;
         foreach($this->fields_info['fields'][$post->post_type] as $field) {
           if ( ! is_array( $field ) || empty( $field['type'] ) )
               continue;
-          
+
           if (isset($field['type']) && $field['type']=='_fieldset') {
               // CODE FOR FIELDSET GROUP
               if ($index>0)
@@ -1660,9 +1660,9 @@ class CustomFields {
         else
             include(PLUGIN_DIR . '/cct-theme-admin.php');
       }
-      
-    
-    
+
+
+
     /**
      * Add post type edit page meta boxes
      *
@@ -1674,49 +1674,49 @@ class CustomFields {
         add_meta_box('content-type-fields', __('Fields','cct'), array($this, 'box_fields'), 'content-type', 'normal', 'high' );
         add_meta_box('content-type-labels', __('Labels','cct'), array($this, 'box_labels'), 'content-type', 'normal', 'high' );
         add_meta_box('content-type-category-sets', __('Category Sets','cct'), array($this, 'box_category_sets'), 'content-type', 'normal', 'high' );
-        
+
         // Advance options
         add_meta_box('content-type-admin-interface', __('Admin interface','cct'), array($this, 'box_admin_interface'), 'content-type', 'advance' );
         add_meta_box('content-type-public-visibility', __('Public visibility','cct'), array($this, 'box_public_visibility'), 'content-type', 'advance' );
         add_meta_box('content-type-permissions', __('Permissions','cct'), array($this, 'box_permissions'), 'content-type', 'advance' );
-        
+
         // Right sidebar
         add_meta_box('content-type-save', __('Save','cct'), array($this, 'box_save'), 'content-type', 'side', 'high' );
         add_meta_box('content-type-statistics', __('Statistics','cct'), array($this, 'box_statistics'), 'content-type', 'side' );
         add_meta_box('content-type-utilities', __('Utilities','cct'), array($this, 'box_utilities'), 'content-type', 'side' );
     }
-    
+
     //
     // Callbacks for to create the meta boxes
     //
     public function box_category_sets($content) {
       include BOXES_TEMPLATES_DIR.'category-sets.php';
     }
-    
+
     public function box_admin_interface($content) {
       include BOXES_TEMPLATES_DIR.'admin-interface.php';
     }
-    
+
     public function box_public_visibility($content) {
       include BOXES_TEMPLATES_DIR.'public-visibility.php';
     }
-    
+
     public function box_permissions($content) {
       include BOXES_TEMPLATES_DIR.'permissions.php';
     }
-    
+
     public function box_save($content) {
       include BOXES_TEMPLATES_DIR.'save.php';
     }
-    
+
     public function box_statistics($content) {
       include BOXES_TEMPLATES_DIR.'statistics.php';
     }
-    
+
     public function box_utilities($content) {
       include BOXES_TEMPLATES_DIR.'utilities.php';
     }
-    
+
     public function box_fields($content) {
       include BOXES_TEMPLATES_DIR.'fields.php';
     }
@@ -1724,8 +1724,8 @@ class CustomFields {
     public function box_labels($content) {
       include BOXES_TEMPLATES_DIR.'labels.php';
     }
-    
-    
+
+
     /**
      * The default settings for which edit meta boxes are hidden
      *
@@ -1737,9 +1737,9 @@ class CustomFields {
       }
       return $result;
     }
-     
-    
-    
+
+
+
     /**
      * Encode JSON objects
      *
@@ -1762,8 +1762,8 @@ class CustomFields {
         return $json;
       }
     }
-    
-    
+
+
     /**
      *  Sanitize systems keys
      *
@@ -1771,7 +1771,7 @@ class CustomFields {
      * digits and underscores.
      *
      * @param $key
-     * 
+     *
      * @return string that can be used as a key
      */
     public function sanitize_key($key){
@@ -1780,43 +1780,43 @@ class CustomFields {
       $key = preg_replace('/[^a-z0-9_]+/', '_', $key);
       return $key;
     }
-    
-    
-    
-    
+
+
+
+
     /**
      * Post/Edit admin page icon
      *
-     * Changes the big icon (32x32) on the post.php and edit.php pages in the admin section for 
+     * Changes the big icon (32x32) on the post.php and edit.php pages in the admin section for
      * those that pertain to one of our post types. Does this by checking the screen and then
      * writing CSS to the page to override the CSS for the default post icon.
      *
      */
     public function post_page_edit_icon(){
       global $current_screen;
-      
+
       if($current_screen->parent_base != 'edit' ) return;
-      
+
       $p = explode('?', $current_screen->parent_file );
-      
+
       if( count($p) < 2 ) return;
-      
+
       parse_str( $p[1], $args );
-      
+
       if( !isset($args['post_type']) ) return;
-      
+
       $type = $args['post_type'];
-      
+
       if( empty($this->fields_info['types'][$type]['menu_icon']) ) return;
-      
+
       $icon = $this->fields_info['types'][$type]['menu_icon'];
       $icon = str_replace( '-16.', '-32.', $icon );
       ?><style type="text/css">
         body #icon-post, body #icon-edit {
           background: url("<?php echo EASYPOSTTYPES_ICONS_URL.$icon;?>") no-repeat 50% 50%;
         }
-      </style><?php 
-      
+      </style><?php
+
     }
   }
 
@@ -1837,7 +1837,7 @@ function the_ept_field($name, $options=null) {
     global $post;
 
     echo get_easy_post_type()->theme($post, $name, $options);
-}  
+}
 
 function get_ept_field($name, $options=null) {
     global $post;
