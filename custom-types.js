@@ -214,13 +214,13 @@ contexflow.setupToggleBoxes = function(){
  */
 contexflow.setupChildParentFeaturesRelationship = function(){
 
-  $('ul.newsig--features-list li:has(ul) > :checkbox').live( 'change', function(){
+  $('ul.newsig--features-list li:has(ul) > :checkbox').on( 'change', function(){
     if(!this.checked) {
       $(this).parent().find('ul :checkbox').attr('checked', false);
     }
   });
   
-  $('ul.newsig--features-list li ul :checkbox').live( 'change', function(){
+  $('ul.newsig--features-list li ul :checkbox').on( 'change', function(){
     if(this.checked) {
       $(this).parentsUntil('ul.newsig--features-list').children(':checkbox').attr('checked', true);
     }
@@ -421,7 +421,7 @@ contexflow.RearrangeTableRowOrder = function(element){
     revert: 'invalid'
   });
   
-  $('a.rearrange-table-row-order--remove', this.tbody.get(0)).live('click', $.proxy(this, 'removeRowHandler') );
+  $('a.rearrange-table-row-order--remove', this.tbody.get(0)).on('click', $.proxy(this, 'removeRowHandler') );
   
   this.tbody.children().data('RearrangeTableRowOrder', this);
   this.element.data('RearrangeTableRowOrder', this);
@@ -728,8 +728,8 @@ contexflow.watchForActionTriggers = function(){
     }
   };
   
-  $('a[data-trigger-scope=contexflow]').live( 'click', action);
-  $('select[data-trigger-scope=contexflow]').live( 'change', action);
+  $('a[data-trigger-scope=contexflow]').on( 'click', action);
+  $('select[data-trigger-scope=contexflow]').on( 'change', action);
 };
 
 
