@@ -4,7 +4,7 @@ Plugin Name: Easy Post Types
 Plugin URI: http://www.wpeasyposttypes.com
 Description: Handle multiple post types and related custom fields and templates
 Author: New Signature
-Version: 1.4.0
+Version: 1.4.1
 Author URI: http://newsignature.com/
 */
 
