@@ -79,3 +79,6 @@ This is an issue with WordPress rewrite.
 
 ### 1.4.2
 1. Update to fix bug in display of custom fields in admin menus
+
+### 1.4.3
+1. Fix bug related to display of custom text field value

@@ -4,7 +4,7 @@ Plugin website: http://www.wpeasyposttypes.com
 Tags: custom post types, cms, custom fields, custom categories
 Requires at least: 3.5.2
 Tested up to: 3.7.1
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 Last updated time: 2013-11-15
 
 Create custom WordPress post types on the fly with an easy to use interface. Then manage custom fields and categories for your post types.
@@ -90,3 +90,6 @@ This is an issue with WordPress rewrite. We are looking into how to workaround t
 
 = 1.4.2 =
 1. Update to fix bug in display of custom fields in admin menus
+
+= 1.4.3 =
+1. Fix bug related to display of custom text field value
