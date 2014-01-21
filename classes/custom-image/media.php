@@ -15,7 +15,7 @@
 
 ?>
 <script language="Javascript">
-var id='#<?php echo $_REQUEST['ref']; ?>';
+var id='#<?php echo htmlspecialchars($_REQUEST['ref']); ?>';
 jQuery(document).ready(function () {
     jQuery('.attachments-apply').bind('click', function(){
         tb_remove();
