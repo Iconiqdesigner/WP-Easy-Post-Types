@@ -93,3 +93,6 @@ This is an issue with WordPress rewrite. We are looking into how to workaround t
 
 = 1.4.3 =
 1. Fix bug related to display of custom text field value
+
+= 1.4.4 =
+1. Fix bug related to image URL sanitization
